@@ -1,0 +1,49 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-color: #282c34;
+  font-family: Roboto, serif;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+p {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.maintitle {
+  font-size: 2em;
+}
+
+.subtitle {
+  margin-top: -20px;
+}
+
+.toggleBtn {
+  padding: 10px;
+}
+
+.css-13qk4d2-MuiButtonBase-root-MuiToggleButton-root {
+  color: rgba(255, 255, 255, 0.54) !important;
+}
+
+.css-13qk4d2-MuiButtonBase-root-MuiToggleButton-root.Mui-selected {
+  color: #26c6da !important;
+  background-color: rgba(38, 198, 218, 0.08);
+}
+
+.gradient-text {
+  background: -webkit-linear-gradient(left, #60c657 30%, #35aee2 60%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
