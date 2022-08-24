@@ -9,6 +9,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import JourneyService from "../services/JourneyService";
 import { useState, useEffect } from "react";
+import { Link } from "@mui/material";
 
 const columns = [
   { id: "depDate", label: "Departure Date", minWidth: 170, align: "right" },
@@ -19,14 +20,9 @@ const columns = [
   { id: "distance", label: "Distance (km)", minWidth: 100 },
 ];
 
-function createData(depdate, depstat, retdate, retstat, duration, distance) {
-  return { depdate, depstat, retdate, retstat, duration, distance };
-}
-
 export default function JourneyTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [rows, setRows] = useState();
   const [journeys, setJourneys] = useState();
 
   async function getJourneys() {
@@ -45,27 +41,6 @@ export default function JourneyTable(props) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  /* const getRows = async () => {
-    if (!journeys) {
-      await getJourneys();
-    } else {
-      const r = [
-        await journeys.map((journey) =>
-          createData(
-            journey.depDate,
-            journey.depStationName,
-            journey.retDate,
-            journey.retStationName,
-            Number(journey.duration) / 60,
-            Number(journey.distance) / 1000
-          )
-        ),
-      ];
-      console.log(r.length);
-      setRows(r);
-    }
-  }; */
 
   useEffect(() => {
     setJourneys(null);
@@ -93,9 +68,17 @@ export default function JourneyTable(props) {
     >
       {journeys ? (
         <>
-          <TableContainer sx={{ maxHeight: 550 }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
+                <TableRow>
+                  <TableCell align="center" colSpan={2}>
+                    DEPARTURES
+                  </TableCell>
+                  <TableCell align="center" colSpan={2}>
+                    RETURNS
+                  </TableCell>
+                </TableRow>
                 <TableRow>
                   {columns.map((column) => (
                     <TableCell
@@ -123,9 +106,15 @@ export default function JourneyTable(props) {
                           const value = row[column.id];
                           return (
                             <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === "number"
-                                ? column.format(value)
-                                : value}
+                              {column.id.includes("Date") ? (
+                                String(value).replace("T", " ")
+                              ) : column.id == "duration" ? (
+                                (Number(value) / 60).toFixed(3)
+                              ) : column.id == "distance" ? (
+                                Number(value) / 1000
+                              ) : (
+                                <Link>{value}</Link>
+                              )}
                             </TableCell>
                           );
                         })}
