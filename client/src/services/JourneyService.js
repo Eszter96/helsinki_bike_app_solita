@@ -5,6 +5,7 @@ const REST_API_BASE_URL = "http://localhost:8080";
 
 class JourneyService {
   getJourneysFromDB = async (dateOf, date) => {
+    console.log("initialize fetch for date of: " + dateOf);
     date = date.toISOString();
     let response;
     try {
