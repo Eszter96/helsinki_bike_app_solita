@@ -1,14 +1,16 @@
 .App {
-  text-align: center;
   min-height: 100vh;
   background-color: #282c34;
   font-family: Roboto, serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-header {
   display: flex;
   flex-direction: column;
-  color: white;
+  text-align: center;
+  color: #949494;
 }
 
 .App-link {
@@ -33,7 +35,7 @@ p {
 }
 
 .css-13qk4d2-MuiButtonBase-root-MuiToggleButton-root {
-  color: rgba(255, 255, 255, 0.54) !important;
+  color: #949494 !important;
 }
 
 .css-13qk4d2-MuiButtonBase-root-MuiToggleButton-root.Mui-selected {

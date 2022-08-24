@@ -16,7 +16,7 @@ function App() {
         <p className="subtitle">Helsinki</p>
       </header>
       <Toggle setSubPage={setSubPage} />
-      <div>{subPage == "journeys" ? <Journeys /> : <Stations />}</div>
+      {subPage == "journeys" ? <Journeys /> : <Stations />}
     </div>
   );
 }

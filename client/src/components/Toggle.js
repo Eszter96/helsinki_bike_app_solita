@@ -30,7 +30,7 @@ export default function Toggle({ setSubPage }) {
         exclusive
         onChange={handleChange}
         aria-label="Platform"
-        style={{ padding: "30px" }}
+        style={{ padding: "30px", justifyContent: "center" }}
       >
         <ToggleButton value="journeys">Journeys</ToggleButton>
         <ToggleButton value="stations">Stations</ToggleButton>

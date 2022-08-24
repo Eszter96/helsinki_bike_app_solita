@@ -7,106 +7,35 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import JourneyService from "../services/JourneyService";
+import { useState, useEffect } from "react";
 
 const columns = [
-  { id: "depdate", label: "Departure Date", minWidth: 170, align: "right" },
-  { id: "depstat", label: "Departure Station", minWidth: 100 },
-  { id: "retdate", label: "Return Date", minWidth: 170, align: "right" },
-  { id: "retstat", label: "Return Station", minWidth: 100 },
-  { id: "duration", label: "Duration time (s)", minWidth: 100 },
-  { id: "distance", label: "Distance (m)", minWidth: 100 },
+  { id: "depDate", label: "Departure Date", minWidth: 170, align: "right" },
+  { id: "depStationName", label: "Departure Station", minWidth: 100 },
+  { id: "retDate", label: "Return Date", minWidth: 170, align: "right" },
+  { id: "retStationName", label: "Return Station", minWidth: 100 },
+  { id: "duration", label: "Duration time (m)", minWidth: 130 },
+  { id: "distance", label: "Distance (km)", minWidth: 100 },
 ];
 
 function createData(depdate, depstat, retdate, retstat, duration, distance) {
   return { depdate, depstat, retdate, retstat, duration, distance };
 }
 
-const rows = [
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2043,
-    500
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2839,
-    676
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Näkinsilta",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2345,
-    654
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    1356,
-    435
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Koskelan varikko",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2432,
-    643
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2043,
-    500
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2839,
-    676
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Näkinsilta",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2345,
-    654
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Laajalahden aukio",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    1356,
-    435
-  ),
-  createData(
-    "2021-05-31T23:57:25",
-    "Koskelan varikko",
-    "2021-06-01T00:05:46",
-    "Teljäntie",
-    2432,
-    643
-  ),
-];
-
-export default function JourneyTable() {
+export default function JourneyTable(props) {
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = useState();
+  const [journeys, setJourneys] = useState();
+
+  async function getJourneys() {
+    const journeys = await JourneyService.getJourneysFromDB(
+      props.dateOf,
+      props.date
+    );
+    setJourneys(journeys);
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -117,54 +46,125 @@ export default function JourneyTable() {
     setPage(0);
   };
 
+  /* const getRows = async () => {
+    if (!journeys) {
+      await getJourneys();
+    } else {
+      const r = [
+        await journeys.map((journey) =>
+          createData(
+            journey.depDate,
+            journey.depStationName,
+            journey.retDate,
+            journey.retStationName,
+            Number(journey.duration) / 60,
+            Number(journey.distance) / 1000
+          )
+        ),
+      ];
+      console.log(r.length);
+      setRows(r);
+    }
+  }; */
+
+  useEffect(() => {
+    setJourneys(null);
+    async function fetchData() {
+      await getJourneys();
+    }
+    fetchData();
+  }, [props.date, props.dateOf]);
+
+  useEffect(() => {
+    async function fetchData() {
+      await getJourneys();
+    }
+    if (!journeys) {
+      fetchData();
+    }
+  }, [props]);
   return (
-    <Paper sx={{ width: "80%", maxWidth: 1000 }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+    <Paper
+      style={{ marginLeft: "auto", marginRight: "auto" }}
+      sx={{
+        width: "80%",
+        maxWidth: 1000,
+      }}
+    >
+      {journeys ? (
+        <>
+          <TableContainer sx={{ maxHeight: 550 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {journeys
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={String(row.depDate) + String(row.retDate)}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.format && typeof value === "number"
+                                ? column.format(value)
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 25, 100]}
+            component="div"
+            count={journeys.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
+      ) : (
+        <div
+          style={{
+            minHeight: "300px",
+            textAlign: "center",
+            display: "flex",
+            justifyItems: "center",
+          }}
+        >
+          <p
+            style={{
+              width: "100%",
+              paddingTop: "15%",
+              textAlign: "center",
+            }}
+          >
+            Data is loading...
+          </p>
+        </div>
+      )}
     </Paper>
   );
 }

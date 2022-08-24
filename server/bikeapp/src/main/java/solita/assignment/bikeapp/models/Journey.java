@@ -1,15 +1,11 @@
 package solita.assignment.bikeapp.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,11 +18,9 @@ public class Journey {
     @Column(name = "id")
     Long id;
 
-    @JsonFormat(pattern=("yyyy-MM-dd HH:mm"))
     @Column(name = "dep_date")
     LocalDateTime depDate;
 
-    @JsonFormat(pattern=("yyyy-MM-dd HH:mm"))
     @Column(name = "ret_date")
     LocalDateTime retDate;
 

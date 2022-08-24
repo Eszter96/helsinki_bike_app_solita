@@ -1,15 +1,9 @@
 package solita.assignment.bikeapp.CSVhandler;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 import solita.assignment.bikeapp.models.Journey;
 import solita.assignment.bikeapp.models.Station;
 import solita.assignment.bikeapp.repositories.JourneyRepository;
@@ -38,25 +32,24 @@ public class CSVreader {
     @Autowired
     StationRepository stationService;
 
-    Integer counter = 0;
-
     @PostConstruct
-    public List<File> getCSVFiles() {
-        URL url = this.getClass()
-                .getClassLoader().getResource("data");
+    public void getCSVFiles() {
+        List<Station> stations = stationService.findAll();
+        if(stations == null) {
+            URL url = this.getClass()
+                    .getClassLoader().getResource("data");
 
-        // Reading only files in the directory
-        try {
-            List<File> files = Files.list(Paths.get(url.toURI()))
-                    .map(Path::toFile)
-                    .filter(File::isFile)
-                    .collect(Collectors.toList());
+            // Reading only files in the directory
+            try {
+                List<File> files = Files.list(Paths.get(url.toURI()))
+                        .map(Path::toFile)
+                        .filter(File::isFile)
+                        .collect(Collectors.toList());
 
-            files.stream().forEach((file) -> SaveDataFromCSVFile(file));
-            return files;
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-            return null;
+                files.stream().forEach((file) -> SaveDataFromCSVFile(file));
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -77,12 +70,6 @@ public class CSVreader {
 
                     String[] journey = line.split(splitBy); // use comma as separator
 
-                    while (Arrays.stream(journey).anyMatch("Aalto-yliopisto (M) Korkeakouluaukio"::equals)) {
-                        journey[Arrays.asList(journey).indexOf("Aalto-yliopisto (M) Korkeakouluaukio")] = "Aalto-yliopisto (M), Korkeakouluaukio";
-                    }
-                    while (Arrays.stream(journey).anyMatch("Aalto-yliopisto (M) Tietotie"::equals)) {
-                        journey[Arrays.asList(journey).indexOf("Aalto-yliopisto (M) Tietotie")] = "Aalto-yliopisto (M), Tietotie";
-                    }
                     Journey j = new Journey();
 
                     // Don't import journeys that lasted for less than ten seconds
@@ -101,12 +88,8 @@ public class CSVreader {
                                 journeys.add(j);
                                 //System.out.println(j);
 
-                            } else {
-                                counter++;
                             }
                         }
-                    } else {
-                        counter++;
                     }
                 }
                 journeyService.saveAll(journeys);
@@ -114,6 +97,8 @@ public class CSVreader {
                 List<Station> stations = new ArrayList<>();
                 while ((line = br.readLine()) != null)   //returns a Boolean value
                 {
+                    line = line.replace("Aalto-yliopisto (M), Korkeakouluaukio", "Aalto-yliopisto (M) Korkeakouluaukio");
+                    line = line.replace("Aalto-yliopisto (M), Tietotie", "Aalto-yliopisto (M) Tietotie");
                     String station[] = line.split(splitBy);
                     Station s = new Station();
                     s.setStationNameSuomi(station[2]);
@@ -124,7 +109,6 @@ public class CSVreader {
                 }
                 stationService.saveAll(stations);
             }
-            System.out.println(counter + " entries were deleted");
         } catch (IOException e) {
             e.printStackTrace();
         }
