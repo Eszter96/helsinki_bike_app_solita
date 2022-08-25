@@ -32,10 +32,15 @@ public class CSVreader {
     @Autowired
     StationRepository stationService;
 
+    List<Station> stations;
+    Optional<Journey> journey;
+
     @PostConstruct
     public void getCSVFiles() {
-        List<Station> stations = stationService.findAll();
-        if(stations == null) {
+        stations = stationService.findAll();
+        journey = journeyService.findById(Long.valueOf(1));
+
+        if(stations.isEmpty() || journey.isEmpty()) {
             URL url = this.getClass()
                     .getClassLoader().getResource("data");
 
@@ -60,13 +65,12 @@ public class CSVreader {
             //parsing a CSV file into BufferedReader class constructor
             BufferedReader br = new BufferedReader(new FileReader(file));
             String headerLine = br.readLine();
-            if (headerLine.indexOf("Departure") > -1) {
+            if (headerLine.indexOf("Departure") > -1 &&  journey.isEmpty()) {
                 List<Journey> journeys = new ArrayList<>();
                 while ((line = br.readLine()) != null)   //returns a Boolean value
                 {
                     //System.out.println(line);
-                    line = line.replace("Aalto-yliopisto (M), Korkeakouluaukio", "Aalto-yliopisto (M) Korkeakouluaukio");
-                    line = line.replace("Aalto-yliopisto (M), Tietotie", "Aalto-yliopisto (M) Tietotie");
+                    line = line.replace("Aalto-yliopisto (M),", "Aalto-yliopisto (M)");
 
                     String[] journey = line.split(splitBy); // use comma as separator
 
@@ -93,18 +97,44 @@ public class CSVreader {
                     }
                 }
                 journeyService.saveAll(journeys);
-            } else {
-                List<Station> stations = new ArrayList<>();
+            } else if (headerLine.indexOf("FID") > -1 && stations.isEmpty()){
+                List<Station> stations = new ArrayList<Station>();
                 while ((line = br.readLine()) != null)   //returns a Boolean value
                 {
-                    line = line.replace("Aalto-yliopisto (M), Korkeakouluaukio", "Aalto-yliopisto (M) Korkeakouluaukio");
-                    line = line.replace("Aalto-yliopisto (M), Tietotie", "Aalto-yliopisto (M) Tietotie");
-                    String station[] = line.split(splitBy);
+                    /*line = line.replace("Aalto-yliopisto (M), Korkea", "Aalto-yliopisto (M) Korkeakouluaukio");
+                    line = line.replace("Aalto-yliopisto (M), Tietot", "Aalto-yliopisto (M) Tietotie");
+                    line = line.replace("Aalto-universitetet (M),", "Aalto-universitetet (M)");
+                    line = line.replace("Aalto University (M),", "Aalto University (M)");*/
+
+                    String splittedString[] = line.split(splitBy);
+                    String modifiedLine = line;
+                    String stationInfo[];
+                    if(line.indexOf('"') > -1) {
+                        for(int i = 0; i < splittedString.length;) {
+                            if(splittedString[i].indexOf('"') > -1) {
+                                String nextS = splittedString[i+1];
+                                if(nextS.indexOf('"') > -1) {
+                                    String originalStrToChange = splittedString[i] + "," + nextS;
+                                    String modifiedStr = splittedString[i] + nextS;
+                                    modifiedLine = modifiedLine.replace(originalStrToChange, modifiedStr);
+                                    // the i will be changed two times in this case
+                                    i++;
+                                }
+                            }
+                            i++;
+                        }
+                        stationInfo = modifiedLine.split(splitBy);
+                    }else{
+                        stationInfo = splittedString;
+                    }
+
+
+
                     Station s = new Station();
-                    s.setStationNameSuomi(station[2]);
-                    s.setAddress(station[5]);
-                    s.setCity(station[7]);
-                    s.setStationId(Long.valueOf(station[1]));
+                    s.setStationNameSuomi(stationInfo[2]);
+                    s.setAddress(stationInfo[5]);
+                    s.setCity(stationInfo[7]);
+                    s.setStationId(Long.valueOf(stationInfo[1]));
                     stations.add(s);
                 }
                 stationService.saveAll(stations);
