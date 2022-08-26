@@ -1,7 +1,8 @@
+import StationTable from "../components/StationTable";
 export default function Stations() {
   return (
     <div>
-      <p>This is station page</p>
+      <StationTable />
     </div>
   );
 }

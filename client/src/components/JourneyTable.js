@@ -12,10 +12,10 @@ import { useState, useEffect } from "react";
 import { Link } from "@mui/material";
 
 const columns = [
-  { id: "depDate", label: "Departure Date", minWidth: 170, align: "right" },
-  { id: "depStationName", label: "Departure Station", minWidth: 100 },
-  { id: "retDate", label: "Return Date", minWidth: 170, align: "right" },
-  { id: "retStationName", label: "Return Station", minWidth: 100 },
+  { id: "depDate", label: "Departure Date", minWidth: 100, align: "right" },
+  { id: "depStationName", label: "Departure Station", minWidth: 240 },
+  { id: "retDate", label: "Return Date", minWidth: 100, align: "right" },
+  { id: "retStationName", label: "Return Station", minWidth: 240 },
   { id: "duration", label: "Duration time (m)", minWidth: 130 },
   { id: "distance", label: "Distance (km)", minWidth: 100 },
 ];
@@ -26,11 +26,12 @@ export default function JourneyTable(props) {
   const [journeys, setJourneys] = useState();
 
   async function getJourneys() {
-    const journeys = await JourneyService.getJourneysFromDB(
-      props.dateOf,
-      props.date
-    );
-    setJourneys(journeys);
+    const j = await JourneyService.getJourneysFromDB(props.dateOf, props.date);
+    if (j) {
+      setJourneys(j);
+    } else {
+      setJourneys(undefined);
+    }
   }
 
   const handleChangePage = (event, newPage) => {
@@ -43,7 +44,6 @@ export default function JourneyTable(props) {
   };
 
   useEffect(() => {
-    setJourneys(null);
     async function fetchData() {
       await getJourneys();
     }
@@ -51,6 +51,7 @@ export default function JourneyTable(props) {
   }, [props.date, props.dateOf]);
 
   useEffect(() => {
+    setJourneys(undefined);
     async function fetchData() {
       await getJourneys();
     }
@@ -62,11 +63,11 @@ export default function JourneyTable(props) {
     <Paper
       style={{ marginLeft: "auto", marginRight: "auto" }}
       sx={{
-        width: "80%",
-        maxWidth: 1000,
+        width: "90%",
+        maxWidth: 1300,
       }}
     >
-      {journeys ? (
+      {journeys && journeys.length > 0 ? (
         <>
           <TableContainer sx={{ maxHeight: 600 }}>
             <Table stickyHeader aria-label="sticky table">
@@ -78,6 +79,7 @@ export default function JourneyTable(props) {
                   <TableCell align="center" colSpan={2}>
                     RETURNS
                   </TableCell>
+                  <TableCell align="center" colSpan={2}></TableCell>
                 </TableRow>
                 <TableRow>
                   {columns.map((column) => (
@@ -108,9 +110,9 @@ export default function JourneyTable(props) {
                             <TableCell key={column.id} align={column.align}>
                               {column.id.includes("Date") ? (
                                 String(value).replace("T", " ")
-                              ) : column.id == "duration" ? (
+                              ) : column.id === "duration" ? (
                                 (Number(value) / 60).toFixed(3)
-                              ) : column.id == "distance" ? (
+                              ) : column.id === "distance" ? (
                                 Number(value) / 1000
                               ) : (
                                 <Link>{value}</Link>
@@ -143,15 +145,27 @@ export default function JourneyTable(props) {
             justifyItems: "center",
           }}
         >
-          <p
-            style={{
-              width: "100%",
-              paddingTop: "15%",
-              textAlign: "center",
-            }}
-          >
-            Data is loading...
-          </p>
+          {journeys !== undefined ? (
+            <p
+              style={{
+                width: "100%",
+                paddingTop: "10%",
+                textAlign: "center",
+              }}
+            >
+              No data can be found responding to filter settings.
+            </p>
+          ) : (
+            <p
+              style={{
+                width: "100%",
+                paddingTop: "10%",
+                textAlign: "center",
+              }}
+            >
+              Data is loading...
+            </p>
+          )}
         </div>
       )}
     </Paper>
