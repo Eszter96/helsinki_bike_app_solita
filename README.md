@@ -8,7 +8,7 @@ Web application displaying city bike journeys and stations in Helsinki area.
 
 Journeys view             |  Stations view
 :-------------------------:|:-------------------------:
- ![](https://i.imgur.com/XIO1Ybr.png)  |  ![](https://i.imgur.com/GLot5uk.png)
+ ![](https://i.imgur.com/XIO1Ybr.png)  | ![](https://i.imgur.com/Fw6VOag.png)
 
 ## 👏SETTING UP THE APP:
 
