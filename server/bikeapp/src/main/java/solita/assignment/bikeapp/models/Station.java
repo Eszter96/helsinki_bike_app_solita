@@ -1,6 +1,5 @@
 package solita.assignment.bikeapp.models;
 
-import org.jetbrains.annotations.NotNull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,12 +21,6 @@ public class Station {
 
     @Column(name = "station_name_suomi")
     String stationNameSuomi;
-
-/*    @Column(name = "station_name_englanti")
-    String stationNameEnglanti;
-
-    @Column(name = "station_name_ruotsi")
-    String stationNameRuotsi;*/
 
     @Column(name = "address")
     String address;

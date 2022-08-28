@@ -24,16 +24,8 @@ public class Journey {
     @Column(name = "ret_date")
     LocalDateTime retDate;
 
-    // Don't need this info
-/*    @Column(name = "dep_station_id")
-    String depStationId;*/
-
     @Column(name = "dep_station_name")
     String depStationName;
-
-    // Don't need this info
-/*    @Column(name = "ret_station_id")
-    String retStationId;*/
 
     @Column(name = "ret_station_Name")
     String retStationName;

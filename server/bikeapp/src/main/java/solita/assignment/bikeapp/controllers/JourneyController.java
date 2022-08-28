@@ -1,13 +1,10 @@
 package solita.assignment.bikeapp.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import solita.assignment.bikeapp.models.Journey;
 import solita.assignment.bikeapp.repositories.JourneyRepository;
-
-import java.sql.ResultSet;
 import java.util.*;
 
 @CrossOrigin("*")

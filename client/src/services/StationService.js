@@ -28,10 +28,6 @@ class StationService {
       return [];
     }
     return response.data;
-    /* return response.data.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    ); */
   };
 
   getStatsForRets = async () => {
@@ -44,10 +40,6 @@ class StationService {
       return [];
     }
     return response.data;
-    /*     return response.data.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    ); */
   };
 }
 

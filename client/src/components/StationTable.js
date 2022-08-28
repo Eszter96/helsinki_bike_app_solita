@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -163,24 +162,6 @@ function Row(props) {
   );
 }
 
-/* Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
-}; */
-
 export default function CollapsibleTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -234,67 +215,91 @@ export default function CollapsibleTable() {
         maxWidth: 400,
       }}
     >
-      <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
-        <Table aria-label="collapsible table" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                style={{ textTransform: "uppercase", textAlign: "center" }}
-              >
-                Stations
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {stations &&
-              stations
-                .sort((a, b) =>
-                  a.stationNameSuomi > b.stationNameSuomi ? 1 : -1
-                )
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((station) => (
-                  <Row
-                    style={{ width: "100%" }}
-                    key={station.stationId}
-                    row={station}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
-                    depStat={
-                      depStats
-                        ? depStats
-                            .filter((stat) =>
-                              stat[0]
-                                .replace('"', "")
-                                .includes(station.stationNameSuomi)
-                            )
-                            .map((result) => result[1])
-                        : "-"
-                    }
-                    retStat={
-                      retStats
-                        ? retStats
-                            .filter((stat) =>
-                              stat[0].includes(
-                                station.stationNameSuomi.replace('"', "")
-                              )
-                            )
-                            .map((result) => result[1])
-                        : "-"
-                    }
-                  />
-                ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 25, 100]}
-        component="div"
-        count={stations.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      {stations ? (
+        <>
+          <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
+            <Table aria-label="collapsible table" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    style={{ textTransform: "uppercase", textAlign: "center" }}
+                  >
+                    Stations
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {stations &&
+                  stations
+                    .sort((a, b) =>
+                      a.stationNameSuomi > b.stationNameSuomi ? 1 : -1
+                    )
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((station) => (
+                      <Row
+                        style={{ width: "100%" }}
+                        key={station.stationId}
+                        row={station}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
+                        depStat={
+                          depStats
+                            ? depStats
+                                .filter((stat) =>
+                                  stat[0]
+                                    .replace('"', "")
+                                    .includes(station.stationNameSuomi)
+                                )
+                                .map((result) => result[1])
+                            : "-"
+                        }
+                        retStat={
+                          retStats
+                            ? retStats
+                                .filter((stat) =>
+                                  stat[0].includes(
+                                    station.stationNameSuomi.replace('"', "")
+                                  )
+                                )
+                                .map((result) => result[1])
+                            : "-"
+                        }
+                      />
+                    ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 25, 100]}
+            component="div"
+            count={stations.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
+      ) : (
+        <div
+          style={{
+            minHeight: "500px",
+            textAlign: "center",
+            display: "flex",
+            justifyItems: "center",
+          }}
+        >
+          <p
+            style={{
+              width: "100%",
+              paddingTop: "30%",
+              textAlign: "center",
+            }}
+            className="pulsate"
+          >
+            Data is loading...
+          </p>
+        </div>
+      )}
     </Paper>
   );
 }

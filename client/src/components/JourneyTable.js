@@ -11,6 +11,7 @@ import JourneyService from "../services/JourneyService";
 import { useState, useEffect } from "react";
 import { Link } from "@mui/material";
 import "../styles.css";
+
 const columns = [
   { id: "depDate", label: "Departure Date", minWidth: 100, align: "right" },
   { id: "depStationName", label: "Departure Station", minWidth: 240 },
