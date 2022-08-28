@@ -123,8 +123,6 @@ public class CSVreader {
                             }
                             i++;
                         }
-                        modifiedLine = modifiedLine.replace("Korkea","Korkeakouluaukio");
-                        modifiedLine = modifiedLine.replace("Tietot","Tietotie");
                         modifiedLine = modifiedLine.replace("\"","");
                         stationInfo = modifiedLine.split(splitBy);
                     }else{

@@ -257,9 +257,9 @@ export default function CollapsibleTable() {
                           retStats
                             ? retStats
                                 .filter((stat) =>
-                                  stat[0].includes(
-                                    station.stationNameSuomi.replace('"', "")
-                                  )
+                                  stat[0]
+                                    .replace('"', "")
+                                    .includes(station.stationNameSuomi)
                                 )
                                 .map((result) => result[1])
                             : "-"
