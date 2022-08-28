@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import JourneyService from "../services/JourneyService";
 import { useState, useEffect } from "react";
 import { Link } from "@mui/material";
-
+import "../styles.css";
 const columns = [
   { id: "depDate", label: "Departure Date", minWidth: 100, align: "right" },
   { id: "depStationName", label: "Departure Station", minWidth: 240 },
@@ -162,6 +162,7 @@ export default function JourneyTable(props) {
                 paddingTop: "10%",
                 textAlign: "center",
               }}
+              className="pulsate"
             >
               Data is loading...
             </p>

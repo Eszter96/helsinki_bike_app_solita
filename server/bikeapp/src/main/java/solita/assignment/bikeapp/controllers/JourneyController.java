@@ -34,14 +34,12 @@ public class JourneyController {
 
     @GetMapping("getStatsForDepStations")
     public List<Object[]> getStatsForDepStations() {
-        List<Object[]> resultSetForDeps = journeyService.getStatsForDeps();
-        return resultSetForDeps;
+        return journeyService.getStatsForDeps();
     }
 
     @GetMapping("getStatsForRetStations")
     public List<Object[]> getStatsForRetStations() {
-        List<Object[]> resultSetForRets = journeyService.getStatsForRets();
-        return resultSetForRets;
+        return journeyService.getStatsForRets();
     }
 
 }

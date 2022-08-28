@@ -16,11 +16,11 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import TablePagination from "@mui/material/TablePagination";
 import { useEffect, useState } from "react";
 import StationService from "../services/StationService";
+import "../styles.css";
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-
   return (
     <React.Fragment>
       <TableRow
@@ -79,7 +79,7 @@ function Row(props) {
                     gutterBottom
                     component="div"
                   >
-                    {row.city}
+                    {row.city.length > 1 ? row.city : "-"}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -101,14 +101,58 @@ function Row(props) {
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography variant="body" gutterBottom component="div">
+                  <Typography
+                    fontWeight="bold"
+                    variant="body"
+                    gutterBottom
+                    component="div"
+                  >
                     Total number of departures:
-                  </Typography>
+                  </Typography>{" "}
+                  {props.depStat != "-" ? (
+                    <Typography
+                      style={{ marginLeft: "10px" }}
+                      variant="body"
+                      gutterBottom
+                      component="div"
+                    >
+                      {props.depStat}
+                    </Typography>
+                  ) : (
+                    <Typography
+                      style={{ marginLeft: "10px" }}
+                      variant="body"
+                      gutterBottom
+                      component="div"
+                      className="pulsate"
+                    >
+                      calculating...
+                    </Typography>
+                  )}
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography variant="body" gutterBottom component="div">
+                  <Typography
+                    fontWeight="bold"
+                    variant="body"
+                    gutterBottom
+                    component="div"
+                  >
                     Total number of departures:
-                  </Typography>
+                  </Typography>{" "}
+                  {props.retStat != "-" ? (
+                    <Typography
+                      style={{ marginLeft: "10px" }}
+                      variant="body"
+                      gutterBottom
+                      component="div"
+                    >
+                      {props.retStat}
+                    </Typography>
+                  ) : (
+                    <p style={{ marginLeft: "10px" }} className="pulsate">
+                      calculating...
+                    </p>
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -141,6 +185,9 @@ export default function CollapsibleTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [stations, setStations] = useState();
+  const [depStats, setDepStats] = useState();
+  const [retStats, setRetStats] = useState();
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -152,15 +199,30 @@ export default function CollapsibleTable() {
 
   async function getStations() {
     const stations = await StationService.getStationsFromDB();
+    console.log(stations.length);
     setStations(stations);
   }
 
+  async function getStationStats() {
+    await StationService.getStatsForDeps().then((res) => {
+      setDepStats(res);
+    });
+    await StationService.getStatsForRets().then((res) => {
+      setRetStats(res);
+    });
+  }
+
   useEffect(() => {
-    async function fetchData() {
+    async function fetchStationsData() {
       await getStations();
     }
+    async function fetchStationsStatsData() {
+      await getStationStats();
+    }
     if (!stations) {
-      fetchData();
+      fetchStationsData();
+    } else {
+      fetchStationsStatsData();
     }
   });
 
@@ -179,19 +241,46 @@ export default function CollapsibleTable() {
               <TableCell
                 style={{ textTransform: "uppercase", textAlign: "center" }}
               >
-                Station Name
+                Stations
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {stations &&
               stations
+                .sort((a, b) =>
+                  a.stationNameSuomi > b.stationNameSuomi ? 1 : -1
+                )
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((station) => (
                   <Row
                     style={{ width: "100%" }}
                     key={station.stationId}
                     row={station}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    depStat={
+                      depStats
+                        ? depStats
+                            .filter((stat) =>
+                              stat[0]
+                                .replace('"', "")
+                                .includes(station.stationNameSuomi)
+                            )
+                            .map((result) => result[1])
+                        : "-"
+                    }
+                    retStat={
+                      retStats
+                        ? retStats
+                            .filter((stat) =>
+                              stat[0].includes(
+                                station.stationNameSuomi.replace('"', "")
+                              )
+                            )
+                            .map((result) => result[1])
+                        : "-"
+                    }
                   />
                 ))}
           </TableBody>
@@ -200,7 +289,7 @@ export default function CollapsibleTable() {
       <TablePagination
         rowsPerPageOptions={[5, 25, 100]}
         component="div"
-        count={100}
+        count={stations.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

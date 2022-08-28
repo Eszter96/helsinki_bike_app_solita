@@ -10,7 +10,7 @@ class StationService {
     } catch (error) {
       return [];
     }
-    console.log(response.data);
+
     if (response) {
       return Promise.all(response.data);
     } else {
@@ -22,34 +22,32 @@ class StationService {
     let response;
     try {
       response = await axios.get(
-        REST_API_BASE_URL + "/stations/getStatsForDepStations"
+        REST_API_BASE_URL + "/journeys/getStatsForDepStations"
       );
     } catch (error) {
       return [];
     }
-    console.log(response.data);
-    if (response) {
-      return Promise.all(response.data);
-    } else {
-      return [];
-    }
+    return response.data;
+    /* return response.data.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    ); */
   };
 
-  getStatsForDeps = async () => {
+  getStatsForRets = async () => {
     let response;
     try {
       response = await axios.get(
-        REST_API_BASE_URL + "/stations/getStatsForRetStations"
+        REST_API_BASE_URL + "/journeys/getStatsForRetStations"
       );
     } catch (error) {
       return [];
     }
-    console.log(response.data);
-    if (response) {
-      return Promise.all(response.data);
-    } else {
-      return [];
-    }
+    return response.data;
+    /*     return response.data.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    ); */
   };
 }
 

@@ -1,0 +1,18 @@
+.pulsate {
+  animation: pulsate 2s infinite ease-out;
+  -moz-animation: pulsate 2s infinite ease-out;
+  -ms-animation: pulsate 2s infinite ease-out;
+  -o-animation: pulsate 2s infinite ease-out;
+  opacity: 0.5;
+}
+@keyframes pulsate {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
