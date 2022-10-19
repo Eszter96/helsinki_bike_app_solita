@@ -6,6 +6,8 @@ Web application displaying city bike journeys and stations in Helsinki area.
 - Journeys displayed in table with pagination + journey filtering by date of return or departure
 - Stations displayed in table with pagination + station related information in collapsible rows
 
+ ![](https://i.imgur.com/XIO1Ybr.png)  
+
 ## 👏SETTING UP THE APP:
 
 💻**Prerequisites:**
