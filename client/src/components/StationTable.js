@@ -136,7 +136,7 @@ function Row(props) {
                     gutterBottom
                     component="div"
                   >
-                    Total number of departures:
+                    Total number of returns:
                   </Typography>{" "}
                   {props.retStat != "-" ? (
                     <Typography
